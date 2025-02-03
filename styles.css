@@ -1,65 +1,22 @@
-body {
-    font-family: Arial, sans-serif;
-    text-align: center;
-    background-color: #f4f4f4;
-}
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HBM Hotel - Gestione Turni</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
 
-h1 {
-    color: #333;
-}
+    <h1>Gestione Turni HBM Hotel</h1>
 
-#giorni-container {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 10px;
-    overflow-x: auto;
-    white-space: nowrap;
-}
+    <button id="annulla-btn">⏪ Annulla Ultima Modifica</button>
 
-.giorno-btn {
-    background-color: #ddd;
-    border: none;
-    padding: 10px 15px;
-    margin: 5px;
-    cursor: pointer;
-    border-radius: 5px;
-}
+    <!-- Contenitore con scroll per tutta la settimana -->
+    <div id="turni-container">
+        <!-- Qui verranno caricati i turni di tutta la settimana -->
+    </div>
 
-.giorno-btn.active {
-    background-color: #0074D9;
-    color: white;
-}
-
-#turni-container {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    margin-top: 20px;
-}
-
-/* Stili delle schede dei turni */
-.turno-card {
-    width: 320px;
-    padding: 15px;
-    margin: 10px;
-    border-radius: 10px;
-    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
-    cursor: grab;
-    user-select: none;
-}
-
-/* Colori definitivi per i reparti */
-.turno-card.reception { background-color: #0074D9; color: white; }
-.turno-card.bar-attico { background-color: #1ABC9C; color: white; }
-.turno-card.bar-strada { background-color: #006400; color: white; }
-.turno-card.pulizie { background-color: #FFD700; color: black; }
-.turno-card.cucina { background-color: #8E44AD; color: white; }
-
-.turno-card h2 {
-    margin: 5px 0;
-}
-
-.turno-card ul {
-    list-style-type: none;
-    padding: 0;
-}
+    <script src="script.js"></script>
+</body>
+</html>
