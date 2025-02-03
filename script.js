@@ -50,7 +50,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 </ul>
             `;
 
-            // Aggiungere il pulsante per spostare Grazia tra Cucina e Pulizie
+            // Pulsante per spostare Grazia tra Cucina e Pulizie
             if (reparto === "Cucina" || reparto === "Pulizie") {
                 const moveGraziaButton = document.createElement("button");
                 moveGraziaButton.innerText = "🔄 Sposta Grazia";
