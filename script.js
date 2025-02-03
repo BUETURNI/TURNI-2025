@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const giornoButtons = document.querySelectorAll(".giorno-btn");
     const annullaButton = document.getElementById("annulla-btn");
 
-    let turniPrecedenti = null;
+    let turniPrecedenti = null; // Per memorizzare lo stato precedente
     const repartiDisponibili = ["Reception", "Cucina", "Pulizie", "Bar Strada", "Bar Attico", "LIBERI"];
 
     let turniSettimanali = JSON.parse(localStorage.getItem("turniSettimanali")) || {
@@ -22,7 +22,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (reparto.toLowerCase().includes("pulizie")) return "pulizie";
         if (reparto.toLowerCase().includes("bar attico")) return "bar-attico";
         if (reparto.toLowerCase().includes("bar strada")) return "bar-strada";
-        if (reparto.toLowerCase().includes("liberi")) return "liberi";
+        if (reparto.toLowerCase().includes("liberi")) return "liberi"; // Stile per la sezione LIBERI
         return "";
     }
 
@@ -57,16 +57,50 @@ document.addEventListener("DOMContentLoaded", function () {
 
             const turniList = document.createElement("ul");
 
-            groupedTurni[reparto].forEach(turno => {
-                const turnoItem = document.createElement("li");
-                turnoItem.setAttribute("draggable", "true");
-                turnoItem.setAttribute("data-id", turno.id);
-                turnoItem.innerHTML = `${turno.nome} - ${turno.ruolo} (${turno.orario})`;
-                turnoItem.addEventListener("dragstart", dragStart);
-                turniList.appendChild(turnoItem);
-            });
+            if (groupedTurni[reparto].length > 0) {
+                groupedTurni[reparto].forEach(turno => {
+                    const turnoItem = document.createElement("li");
+                    turnoItem.setAttribute("contenteditable", "true");
+                    turnoItem.setAttribute("draggable", "true");
+                    turnoItem.setAttribute("data-id", turno.id);
+                    turnoItem.setAttribute("data-reparto", reparto);
+                    turnoItem.innerHTML = `${turno.nome} - ${turno.ruolo} (${turno.orario})`;
+                    turnoItem.addEventListener("dragstart", dragStart);
+                    turniList.appendChild(turnoItem);
+                });
+            } else {
+                const emptyMessage = document.createElement("p");
+                emptyMessage.innerText = "Nessun turno assegnato";
+                emptyMessage.style.fontStyle = "italic";
+                emptyMessage.style.color = "#ccc";
+                turniList.appendChild(emptyMessage);
+            }
 
             card.appendChild(turniList);
+
+            // Pulsante per aggiungere nuovi turni
+            const addButton = document.createElement("button");
+            addButton.innerText = "➕ Aggiungi Turno";
+            addButton.onclick = () => {
+                const nuovoTurno = {
+                    id: Date.now(),
+                    nome: "Nuovo",
+                    ruolo: "Ruolo",
+                    orario: "00:00 - 00:00",
+                    reparto: reparto
+                };
+                turniSettimanali[giorno].push(nuovoTurno);
+                saveTurni();
+                renderTurni(giorno);
+            };
+
+            // Pulsante per salvare modifiche
+            const saveButton = document.createElement("button");
+            saveButton.innerText = "💾 Salva Modifiche";
+            saveButton.onclick = saveTurni;
+
+            card.appendChild(addButton);
+            card.appendChild(saveButton);
             turniContainer.appendChild(card);
         });
     }
