@@ -25,7 +25,7 @@ h1 {
     user-select: none;
 }
 
-/* Nuovi colori per i reparti aggiornati */
+/* Nuovi colori definitivi per i reparti */
 .turno-card.reception { background-color: #0074D9; color: white; }
 .turno-card.bar-attico { background-color: #1ABC9C; color: white; }
 .turno-card.bar-strada { background-color: #006400; color: white; }
