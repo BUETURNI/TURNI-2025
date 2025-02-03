@@ -10,69 +10,58 @@ document.addEventListener("DOMContentLoaded", function () {
         { id: 6, nome: "Bush", ruolo: "Chef Cucina", orario: "16:00 - 00:00", reparto: "Cucina" },
         { id: 7, nome: "Sara Floris", ruolo: "Addetta Pulizie", orario: "06:00 - 14:00", reparto: "Pulizie" },
         { id: 8, nome: "Vacante", ruolo: "Housekeeping Staff", orario: "06:00 - 14:00", reparto: "Pulizie" },
-        { id: 9, nome: "Vacante", ruolo: "Barman Terrazza", orario: "07:30 - 15:30", reparto: "Bar" },
-        { id: 10, nome: "Vacante", ruolo: "Barman Attico", orario: "16:00 - Chiusura", reparto: "Bar" }
+        { id: 9, nome: "Vacante", ruolo: "Barman Terrazza", orario: "07:30 - 15:30", reparto: "Bar Terrazza" },
+        { id: 10, nome: "Vacante", ruolo: "Barman Attico", orario: "16:00 - Chiusura", reparto: "Bar Attico" }
     ];
 
     function getRepartoClass(reparto) {
         if (reparto.toLowerCase().includes("reception")) return "reception";
         if (reparto.toLowerCase().includes("cucina")) return "cucina";
         if (reparto.toLowerCase().includes("pulizie")) return "pulizie";
-        if (reparto.toLowerCase().includes("bar")) return "bar";
+        if (reparto.toLowerCase().includes("bar attico")) return "bar-attico";
+        if (reparto.toLowerCase().includes("bar terrazza")) return "bar-terrazza";
         return "";
     }
 
-    function groupByReparto() {
+    function renderTurni() {
+        turniContainer.innerHTML = "";
         let groupedTurni = {};
+
         turni.forEach(turno => {
             if (!groupedTurni[turno.reparto]) {
                 groupedTurni[turno.reparto] = [];
             }
             groupedTurni[turno.reparto].push(turno);
         });
-        return groupedTurni;
-    }
-
-    function renderTurni() {
-        turniContainer.innerHTML = "";
-        const groupedTurni = groupByReparto();
 
         Object.keys(groupedTurni).forEach(reparto => {
             const card = document.createElement("div");
             card.className = `turno-card ${getRepartoClass(reparto)}`;
-            card.setAttribute("draggable", true);
-            card.setAttribute("data-reparto", reparto);
-            card.innerHTML = `
-                <h2>${reparto}</h2>
-                <ul>
-                    ${groupedTurni[reparto].map(turno => `<li><strong>${turno.nome}</strong> - ${turno.ruolo} (${turno.orario})</li>`).join("")}
-                </ul>
-            `;
-            card.addEventListener("dragstart", dragStart);
+            card.innerHTML = `<h2>${reparto}</h2><ul>${groupedTurni[reparto].map(turno => `<li contenteditable="true">${turno.nome} - ${turno.ruolo} (${turno.orario})</li>`).join("")}</ul>`;
+
+            const addButton = document.createElement("button");
+            addButton.innerText = "➕ Aggiungi Turno";
+            addButton.onclick = () => {
+                const nuovoTurno = { id: Date.now(), nome: "Nuovo", ruolo: "Ruolo", orario: "00:00 - 00:00", reparto: reparto };
+                turni.push(nuovoTurno);
+                saveTurni();
+                renderTurni();
+            };
+
+            const saveButton = document.createElement("button");
+            saveButton.innerText = "💾 Salva Modifiche";
+            saveButton.onclick = saveTurni;
+
+            card.appendChild(addButton);
+            card.appendChild(saveButton);
             turniContainer.appendChild(card);
         });
     }
 
-    function dragStart(event) {
-        event.dataTransfer.setData("text/plain", event.target.getAttribute("data-reparto"));
+    function saveTurni() {
+        localStorage.setItem("turni", JSON.stringify(turni));
+        renderTurni();
     }
-
-    turniContainer.addEventListener("dragover", function (event) {
-        event.preventDefault();
-    });
-
-    turniContainer.addEventListener("drop", function (event) {
-        event.preventDefault();
-        const draggedReparto = event.dataTransfer.getData("text/plain");
-        const draggedTurni = turni.filter(turno => turno.reparto === draggedReparto);
-        
-        if (draggedTurni.length) {
-            turni = turni.filter(turno => turno.reparto !== draggedReparto);
-            turni = [...turni, ...draggedTurni];
-            localStorage.setItem("turni", JSON.stringify(turni));
-            renderTurni();
-        }
-    });
 
     renderTurni();
 });
