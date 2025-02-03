@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", function () {
         { id: 6, nome: "Bush", ruolo: "Chef Cucina", orario: "16:00 - 00:00", reparto: "Cucina" },
         { id: 7, nome: "Sara Floris", ruolo: "Addetta Pulizie", orario: "06:00 - 14:00", reparto: "Pulizie" },
         { id: 8, nome: "Vacante", ruolo: "Housekeeping Staff", orario: "06:00 - 14:00", reparto: "Pulizie" },
-        { id: 9, nome: "Vacante", ruolo: "Barman Terrazza", orario: "07:30 - 15:30", reparto: "Bar Terrazza" },
+        { id: 9, nome: "Vacante", ruolo: "Barman Strada", orario: "07:30 - 15:30", reparto: "Bar Strada" },
         { id: 10, nome: "Vacante", ruolo: "Barman Attico", orario: "16:00 - Chiusura", reparto: "Bar Attico" }
     ];
 
@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (reparto.toLowerCase().includes("cucina")) return "cucina";
         if (reparto.toLowerCase().includes("pulizie")) return "pulizie";
         if (reparto.toLowerCase().includes("bar attico")) return "bar-attico";
-        if (reparto.toLowerCase().includes("bar terrazza")) return "bar-terrazza";
+        if (reparto.toLowerCase().includes("bar strada")) return "bar-strada";
         return "";
     }
 
@@ -37,7 +37,8 @@ document.addEventListener("DOMContentLoaded", function () {
         Object.keys(groupedTurni).forEach(reparto => {
             const card = document.createElement("div");
             card.className = `turno-card ${getRepartoClass(reparto)}`;
-            card.innerHTML = `<h2>${reparto}</h2><ul>${groupedTurni[reparto].map(turno => `<li contenteditable="true">${turno.nome} - ${turno.ruolo} (${turno.orario})</li>`).join("")}</ul>`;
+            card.innerHTML = `<h2>${reparto}</h2><ul>${groupedTurni[reparto].map(turno => `
+                <li contenteditable="true">${turno.nome} - ${turno.ruolo} (${turno.orario})</li>`).join("")}</ul>`;
 
             const addButton = document.createElement("button");
             addButton.innerText = "➕ Aggiungi Turno";
