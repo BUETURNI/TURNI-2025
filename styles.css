@@ -3,6 +3,38 @@ body {
     text-align: center;
     background-color: #f4f4f4;
 }
+
 h1 {
     color: #333;
+}
+
+#turni-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.turno-card {
+    width: 250px;
+    padding: 15px;
+    margin: 10px;
+    border-radius: 10px;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+    cursor: grab;
+    user-select: none;
+}
+
+.turno-card.reception { background-color: #3498db; color: white; }
+.turno-card.cucina { background-color: #2ecc71; color: white; }
+.turno-card.pulizie { background-color: #f39c12; color: white; }
+.turno-card.bar { background-color: #9b59b6; color: white; }
+
+.turno-card h3 {
+    margin: 5px 0;
+}
+
+.turno-card p {
+    font-size: 14px;
+    margin: 3px 0;
 }
