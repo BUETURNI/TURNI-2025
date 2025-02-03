@@ -22,18 +22,31 @@ document.addEventListener("DOMContentLoaded", function () {
         return "";
     }
 
+    function groupByReparto() {
+        let groupedTurni = {};
+        turni.forEach(turno => {
+            if (!groupedTurni[turno.reparto]) {
+                groupedTurni[turno.reparto] = [];
+            }
+            groupedTurni[turno.reparto].push(turno);
+        });
+        return groupedTurni;
+    }
+
     function renderTurni() {
         turniContainer.innerHTML = "";
-        turni.forEach(turno => {
+        const groupedTurni = groupByReparto();
+
+        Object.keys(groupedTurni).forEach(reparto => {
             const card = document.createElement("div");
-            card.className = `turno-card ${getRepartoClass(turno.reparto)}`;
+            card.className = `turno-card ${getRepartoClass(reparto)}`;
             card.setAttribute("draggable", true);
-            card.setAttribute("data-id", turno.id);
+            card.setAttribute("data-reparto", reparto);
             card.innerHTML = `
-                <h3>${turno.nome}</h3>
-                <p><strong>${turno.ruolo}</strong></p>
-                <p>${turno.orario}</p>
-                <p>${turno.reparto}</p>
+                <h2>${reparto}</h2>
+                <ul>
+                    ${groupedTurni[reparto].map(turno => `<li><strong>${turno.nome}</strong> - ${turno.ruolo} (${turno.orario})</li>`).join("")}
+                </ul>
             `;
             card.addEventListener("dragstart", dragStart);
             turniContainer.appendChild(card);
@@ -41,7 +54,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function dragStart(event) {
-        event.dataTransfer.setData("text/plain", event.target.getAttribute("data-id"));
+        event.dataTransfer.setData("text/plain", event.target.getAttribute("data-reparto"));
     }
 
     turniContainer.addEventListener("dragover", function (event) {
@@ -50,12 +63,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
     turniContainer.addEventListener("drop", function (event) {
         event.preventDefault();
-        const draggedId = event.dataTransfer.getData("text/plain");
-        const draggedIndex = turni.findIndex(turno => turno.id == draggedId);
-
-        if (draggedIndex !== -1) {
-            const draggedTurno = turni.splice(draggedIndex, 1)[0];
-            turni.push(draggedTurno);
+        const draggedReparto = event.dataTransfer.getData("text/plain");
+        const draggedTurni = turni.filter(turno => turno.reparto === draggedReparto);
+        
+        if (draggedTurni.length) {
+            turni = turni.filter(turno => turno.reparto !== draggedReparto);
+            turni = [...turni, ...draggedTurni];
             localStorage.setItem("turni", JSON.stringify(turni));
             renderTurni();
         }
