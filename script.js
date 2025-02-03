@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", function () {
         { id: 2, nome: "Lucrezia", ruolo: "Receptionist", orario: "15:00 - 23:00", reparto: "Reception" },
         { id: 3, nome: "Gianfranco", ruolo: "Notturno", orario: "23:00 - 07:30", reparto: "Reception" },
         { id: 4, nome: "Sabrina", ruolo: "Responsabile Colazioni", orario: "06:00 - 14:00", reparto: "Cucina" },
-        { id: 5, nome: "Grazia", ruolo: "Supporto Colazioni & Pulizie", orario: "07:00 - 15:00", reparto: "Cucina" }, // Può essere spostata tra Cucina e Pulizie
+        { id: 5, nome: "Grazia", ruolo: "Supporto", orario: "07:00 - 15:00", reparto: "Cucina" }, // Grazia può essere spostata tra Cucina e Pulizie
         { id: 6, nome: "Bush", ruolo: "Chef Cucina", orario: "16:00 - 00:00", reparto: "Cucina" },
         { id: 7, nome: "Sara Floris", ruolo: "Addetta Pulizie", orario: "06:00 - 14:00", reparto: "Pulizie" },
         { id: 8, nome: "Vacante", ruolo: "Housekeeping Staff", orario: "06:00 - 14:00", reparto: "Pulizie" },
@@ -37,9 +37,35 @@ document.addEventListener("DOMContentLoaded", function () {
         Object.keys(groupedTurni).forEach(reparto => {
             const card = document.createElement("div");
             card.className = `turno-card ${getRepartoClass(reparto)}`;
-            card.innerHTML = `<h2>${reparto}</h2><ul>${groupedTurni[reparto].map(turno => `
-                <li contenteditable="true" draggable="true" data-id="${turno.id}">${turno.nome} - ${turno.ruolo} (${turno.orario})</li>`).join("")}</ul>`;
+            card.setAttribute("draggable", true);
+            card.setAttribute("data-reparto", reparto);
+            card.innerHTML = `
+                <h2>${reparto}</h2>
+                <ul>
+                    ${groupedTurni[reparto].map(turno => `
+                        <li contenteditable="true" draggable="true" data-id="${turno.id}">
+                            ${turno.nome} - ${turno.ruolo} (${turno.orario})
+                        </li>
+                    `).join("")}
+                </ul>
+            `;
 
+            // Aggiungere il pulsante per spostare Grazia tra Cucina e Pulizie
+            if (reparto === "Cucina" || reparto === "Pulizie") {
+                const moveGraziaButton = document.createElement("button");
+                moveGraziaButton.innerText = "🔄 Sposta Grazia";
+                moveGraziaButton.onclick = () => {
+                    const graziaIndex = turni.findIndex(t => t.nome === "Grazia");
+                    if (graziaIndex !== -1) {
+                        turni[graziaIndex].reparto = (turni[graziaIndex].reparto === "Cucina") ? "Pulizie" : "Cucina";
+                        saveTurni();
+                        renderTurni();
+                    }
+                };
+                card.appendChild(moveGraziaButton);
+            }
+
+            // Pulsante per aggiungere nuovi turni
             const addButton = document.createElement("button");
             addButton.innerText = "➕ Aggiungi Turno";
             addButton.onclick = () => {
@@ -49,6 +75,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 renderTurni();
             };
 
+            // Pulsante per salvare modifiche
             const saveButton = document.createElement("button");
             saveButton.innerText = "💾 Salva Modifiche";
             saveButton.onclick = saveTurni;
