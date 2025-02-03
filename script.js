@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", function () {
         { id: 2, nome: "Lucrezia", ruolo: "Receptionist", orario: "15:00 - 23:00", reparto: "Reception" },
         { id: 3, nome: "Gianfranco", ruolo: "Notturno", orario: "23:00 - 07:30", reparto: "Reception" },
         { id: 4, nome: "Sabrina", ruolo: "Responsabile Colazioni", orario: "06:00 - 14:00", reparto: "Cucina" },
-        { id: 5, nome: "Grazia", ruolo: "Supporto Colazioni & Pulizie", orario: "07:00 - 15:00", reparto: "Cucina" },
+        { id: 5, nome: "Grazia", ruolo: "Supporto Colazioni & Pulizie", orario: "07:00 - 15:00", reparto: "Cucina" }, // Può essere spostata tra Cucina e Pulizie
         { id: 6, nome: "Bush", ruolo: "Chef Cucina", orario: "16:00 - 00:00", reparto: "Cucina" },
         { id: 7, nome: "Sara Floris", ruolo: "Addetta Pulizie", orario: "06:00 - 14:00", reparto: "Pulizie" },
         { id: 8, nome: "Vacante", ruolo: "Housekeeping Staff", orario: "06:00 - 14:00", reparto: "Pulizie" },
@@ -38,7 +38,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const card = document.createElement("div");
             card.className = `turno-card ${getRepartoClass(reparto)}`;
             card.innerHTML = `<h2>${reparto}</h2><ul>${groupedTurni[reparto].map(turno => `
-                <li contenteditable="true">${turno.nome} - ${turno.ruolo} (${turno.orario})</li>`).join("")}</ul>`;
+                <li contenteditable="true" draggable="true" data-id="${turno.id}">${turno.nome} - ${turno.ruolo} (${turno.orario})</li>`).join("")}</ul>`;
 
             const addButton = document.createElement("button");
             addButton.innerText = "➕ Aggiungi Turno";
