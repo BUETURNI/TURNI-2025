@@ -1,11 +1,11 @@
 document.addEventListener("DOMContentLoaded", function () {
     const turniContainer = document.getElementById("turni-container");
     const giornoButtons = document.querySelectorAll(".giorno-btn");
+    const annullaButton = document.getElementById("annulla-btn");
 
-    // Tutti i reparti da visualizzare sempre
-    const repartiDisponibili = ["Reception", "Cucina", "Pulizie", "Bar Strada", "Bar Attico"];
+    let turniPrecedenti = null; // Per memorizzare lo stato precedente
+    const repartiDisponibili = ["Reception", "Cucina", "Pulizie", "Bar Strada", "Bar Attico", "LIBERI"];
 
-    // Dati settimanali (caricati da LocalStorage o predefiniti)
     let turniSettimanali = JSON.parse(localStorage.getItem("turniSettimanali")) || {
         "Lunedì": [],
         "Martedì": [],
@@ -22,6 +22,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (reparto.toLowerCase().includes("pulizie")) return "pulizie";
         if (reparto.toLowerCase().includes("bar attico")) return "bar-attico";
         if (reparto.toLowerCase().includes("bar strada")) return "bar-strada";
+        if (reparto.toLowerCase().includes("liberi")) return "liberi"; // Stile per la sezione LIBERI
         return "";
     }
 
@@ -120,23 +121,5 @@ document.addEventListener("DOMContentLoaded", function () {
 
         let turnoIndex = turniSettimanali[giornoSelezionato].findIndex(t => t.id == turnoId);
         if (turnoIndex !== -1) {
-            turniSettimanali[giornoSelezionato][turnoIndex].reparto = newReparto;
-            saveTurni();
-            renderTurni(giornoSelezionato);
-        }
-    }
-
-    function saveTurni() {
-        localStorage.setItem("turniSettimanali", JSON.stringify(turniSettimanali));
-    }
-
-    giornoButtons.forEach(button => {
-        button.addEventListener("click", function () {
-            giornoButtons.forEach(btn => btn.classList.remove("active"));
-            button.classList.add("active");
-            renderTurni(button.dataset.giorno);
-        });
-    });
-
-    document.querySelector(".giorno-btn[data-giorno='Lunedì']").click();
-});
+            turniPrecedenti = JSON.parse(JSON.stringify(turniSettimanali)); // Salva lo stato precedente
+            turniSettimanali[giornoSelezionato][turnoIndex].
