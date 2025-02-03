@@ -2,11 +2,12 @@ document.addEventListener("DOMContentLoaded", function () {
     const turniContainer = document.getElementById("turni-container");
     const giornoButtons = document.querySelectorAll(".giorno-btn");
 
+    // Tutti i reparti da visualizzare sempre
+    const repartiDisponibili = ["Reception", "Cucina", "Pulizie", "Bar Strada", "Bar Attico"];
+
+    // Dati settimanali (caricati da LocalStorage o predefiniti)
     let turniSettimanali = JSON.parse(localStorage.getItem("turniSettimanali")) || {
-        "Lunedì": [
-            { id: 1, nome: "Annalisa", ruolo: "Receptionist", orario: "07:30 - 15:30", reparto: "Reception" },
-            { id: 4, nome: "Sabrina", ruolo: "Responsabile Colazioni", orario: "06:00 - 14:00", reparto: "Cucina" }
-        ],
+        "Lunedì": [],
         "Martedì": [],
         "Mercoledì": [],
         "Giovedì": [],
@@ -28,10 +29,12 @@ document.addEventListener("DOMContentLoaded", function () {
         turniContainer.innerHTML = "";
         let groupedTurni = {};
 
+        // Assicuriamoci che il giorno abbia un array valido
         if (!turniSettimanali[giorno]) {
             turniSettimanali[giorno] = [];
         }
 
+        // Raggruppiamo i turni per reparto
         turniSettimanali[giorno].forEach(turno => {
             if (!groupedTurni[turno.reparto]) {
                 groupedTurni[turno.reparto] = [];
@@ -39,17 +42,50 @@ document.addEventListener("DOMContentLoaded", function () {
             groupedTurni[turno.reparto].push(turno);
         });
 
+        // Assicuriamoci che tutti i reparti siano sempre visibili
+        repartiDisponibili.forEach(reparto => {
+            if (!groupedTurni[reparto]) {
+                groupedTurni[reparto] = []; // Inizializza un array vuoto per il reparto
+            }
+        });
+
+        // Creazione delle schede dei reparti
         Object.keys(groupedTurni).forEach(reparto => {
             const card = document.createElement("div");
             card.className = `turno-card ${getRepartoClass(reparto)}`;
-            card.innerHTML = `<h2>${reparto}</h2><ul>${groupedTurni[reparto].map(turno => `
-                <li contenteditable="true">${turno.nome} - ${turno.ruolo} (${turno.orario})</li>`).join("")}</ul>`;
+            card.innerHTML = `<h2>${reparto}</h2>`;
+
+            const turniList = document.createElement("ul");
+
+            if (groupedTurni[reparto].length > 0) {
+                groupedTurni[reparto].forEach(turno => {
+                    const turnoItem = document.createElement("li");
+                    turnoItem.setAttribute("contenteditable", "true");
+                    turnoItem.innerHTML = `${turno.nome} - ${turno.ruolo} (${turno.orario})`;
+                    turniList.appendChild(turnoItem);
+                });
+            } else {
+                // Se il reparto non ha turni, mostra un messaggio
+                const emptyMessage = document.createElement("p");
+                emptyMessage.innerText = "Nessun turno assegnato";
+                emptyMessage.style.fontStyle = "italic";
+                emptyMessage.style.color = "#ccc";
+                turniList.appendChild(emptyMessage);
+            }
+
+            card.appendChild(turniList);
 
             // Pulsante per aggiungere nuovi turni
             const addButton = document.createElement("button");
             addButton.innerText = "➕ Aggiungi Turno";
             addButton.onclick = () => {
-                const nuovoTurno = { id: Date.now(), nome: "Nuovo", ruolo: "Ruolo", orario: "00:00 - 00:00", reparto: reparto };
+                const nuovoTurno = {
+                    id: Date.now(),
+                    nome: "Nuovo",
+                    ruolo: "Ruolo",
+                    orario: "00:00 - 00:00",
+                    reparto: reparto
+                };
                 turniSettimanali[giorno].push(nuovoTurno);
                 saveTurni();
                 renderTurni(giorno);
@@ -58,7 +94,7 @@ document.addEventListener("DOMContentLoaded", function () {
             // Pulsante per salvare modifiche
             const saveButton = document.createElement("button");
             saveButton.innerText = "💾 Salva Modifiche";
-            saveButton.onclick = () => saveTurni();
+            saveButton.onclick = saveTurni;
 
             card.appendChild(addButton);
             card.appendChild(saveButton);
