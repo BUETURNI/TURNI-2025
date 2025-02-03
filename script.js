@@ -62,4 +62,50 @@ document.addEventListener("DOMContentLoaded", function () {
                 turnoItem.innerHTML = `${turno.nome} - ${turno.ruolo} (${turno.orario})`;
 
                 if (ruoloCorrente !== "visualizzazione") {
-                   
+                    turnoItem.setAttribute("draggable", "true");
+                    turnoItem.setAttribute("data-id", turno.id);
+                    turnoItem.addEventListener("dragstart", dragStart);
+                }
+
+                turniList.appendChild(turnoItem);
+            });
+
+            card.appendChild(turniList);
+
+            if (ruoloCorrente === "boss" || ruoloCorrente === "supervisor") {
+                const addButton = document.createElement("button");
+                addButton.innerText = "➕ Aggiungi Turno";
+                addButton.onclick = () => {
+                    const nuovoTurno = { id: Date.now(), nome: "Nuovo", ruolo: "Ruolo", orario: "00:00 - 00:00", reparto: reparto };
+                    turniSettimanali[giorno].push(nuovoTurno);
+                    saveTurni();
+                    renderTurni(giorno);
+                };
+                card.appendChild(addButton);
+            }
+
+            turniContainer.appendChild(card);
+        });
+
+        annullaButton.style.display = (ruoloCorrente === "boss" || ruoloCorrente === "supervisor") ? "block" : "none";
+    }
+
+    function dragStart(event) {
+        event.dataTransfer.setData("text/plain", event.target.getAttribute("data-id"));
+    }
+
+    function saveTurni() {
+        localStorage.setItem("turniSettimanali", JSON.stringify(turniSettimanali));
+    }
+
+    giornoButtons.forEach(button => {
+        button.addEventListener("click", function () {
+            giornoButtons.forEach(btn => btn.classList.remove("active"));
+            button.classList.add("active");
+            renderTurni(button.dataset.giorno);
+        });
+    });
+
+    document.querySelector(".giorno-btn[data-giorno='Lunedì']").click();
+    ruoloSelect.addEventListener("change", cambiaRuolo);
+});
