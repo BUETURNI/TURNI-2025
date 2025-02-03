@@ -1,5 +1,8 @@
 document.addEventListener("DOMContentLoaded", function () {
-    const turni = [
+    const tableBody = document.getElementById("turni-body");
+
+    // Controlla se ci sono turni salvati nel LocalStorage
+    let turni = JSON.parse(localStorage.getItem("turni")) || [
         { id: 1, nome: "Annalisa", ruolo: "Receptionist", orario: "07:30 - 15:30", reparto: "Reception" },
         { id: 2, nome: "Lucrezia", ruolo: "Receptionist", orario: "15:00 - 23:00", reparto: "Reception" },
         { id: 3, nome: "Gianfranco", ruolo: "Notturno", orario: "23:00 - 07:30", reparto: "Reception" },
@@ -12,7 +15,9 @@ document.addEventListener("DOMContentLoaded", function () {
         { id: 10, nome: "Vacante", ruolo: "Barman Attico", orario: "16:00 - Chiusura", reparto: "Bar" }
     ];
 
-    const tableBody = document.getElementById("turni-body");
+    function saveTurni() {
+        localStorage.setItem("turni", JSON.stringify(turni));
+    }
 
     function renderTurni() {
         tableBody.innerHTML = ""; // Puliamo la tabella prima di aggiornare
@@ -47,6 +52,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (draggedIndex !== -1) {
             const draggedTurno = turni.splice(draggedIndex, 1)[0];
             turni.push(draggedTurno); // Sposta il turno in fondo alla lista
+            saveTurni(); // Salviamo dopo ogni modifica
             renderTurni();
         }
     });
