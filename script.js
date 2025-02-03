@@ -122,4 +122,34 @@ document.addEventListener("DOMContentLoaded", function () {
         let turnoIndex = turniSettimanali[giornoSelezionato].findIndex(t => t.id == turnoId);
         if (turnoIndex !== -1) {
             turniPrecedenti = JSON.parse(JSON.stringify(turniSettimanali)); // Salva lo stato precedente
-            turniSettimanali[giornoSelezionato][turnoIndex].
+            turniSettimanali[giornoSelezionato][turnoIndex].reparto = newReparto;
+            saveTurni();
+            renderTurni(giornoSelezionato);
+        }
+    }
+
+    function saveTurni() {
+        localStorage.setItem("turniSettimanali", JSON.stringify(turniSettimanali));
+    }
+
+    function annullaUltimaModifica() {
+        if (turniPrecedenti) {
+            turniSettimanali = JSON.parse(JSON.stringify(turniPrecedenti)); // Ripristina lo stato precedente
+            saveTurni();
+            const giornoSelezionato = document.querySelector(".giorno-btn.active").dataset.giorno;
+            renderTurni(giornoSelezionato);
+        }
+    }
+
+    annullaButton.addEventListener("click", annullaUltimaModifica);
+
+    giornoButtons.forEach(button => {
+        button.addEventListener("click", function () {
+            giornoButtons.forEach(btn => btn.classList.remove("active"));
+            button.classList.add("active");
+            renderTurni(button.dataset.giorno);
+        });
+    });
+
+    document.querySelector(".giorno-btn[data-giorno='Lunedì']").click();
+});
