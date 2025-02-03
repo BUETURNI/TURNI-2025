@@ -10,9 +10,20 @@
 
     <h1>Gestione Turni HBM Hotel</h1>
 
-    <button id="annulla-btn">⏪ Annulla Ultima Modifica</button>
+    <!-- Selezione del ruolo -->
+    <div id="selezione-ruolo">
+        <label for="ruolo">Seleziona il tuo ruolo:</label>
+        <select id="ruolo">
+            <option value="visualizzazione">Visualizzazione</option>
+            <option value="receptionist">Receptionist</option>
+            <option value="supervisor">Supervisor</option>
+            <option value="boss">Boss</option>
+        </select>
+        <button onclick="cambiaRuolo()">Conferma</button>
+    </div>
 
-    <!-- Barra di navigazione dei giorni della settimana -->
+    <button id="annulla-btn" style="display:none;">⏪ Annulla Ultima Modifica</button>
+
     <div id="giorni-container">
         <button class="giorno-btn" data-giorno="Lunedì">Lunedì</button>
         <button class="giorno-btn" data-giorno="Martedì">Martedì</button>
@@ -23,9 +34,7 @@
         <button class="giorno-btn" data-giorno="Domenica">Domenica</button>
     </div>
 
-    <div id="turni-container">
-        <!-- Qui verranno caricati i turni in base al giorno selezionato -->
-    </div>
+    <div id="turni-container"></div>
 
     <script src="script.js"></script>
 </body>
