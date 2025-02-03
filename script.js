@@ -26,14 +26,22 @@ document.addEventListener("DOMContentLoaded", function () {
             row.setAttribute("draggable", true);
             row.setAttribute("data-id", turno.id);
             row.innerHTML = `
-                <td>${turno.nome}</td>
-                <td>${turno.ruolo}</td>
-                <td>${turno.orario}</td>
+                <td contenteditable="true" onBlur="updateTurno(${turno.id}, 'nome', this.innerText)">${turno.nome}</td>
+                <td contenteditable="true" onBlur="updateTurno(${turno.id}, 'ruolo', this.innerText)">${turno.ruolo}</td>
+                <td contenteditable="true" onBlur="updateTurno(${turno.id}, 'orario', this.innerText)">${turno.orario}</td>
                 <td>${turno.reparto}</td>
             `;
             row.addEventListener("dragstart", dragStart);
             tableBody.appendChild(row);
         });
+    }
+
+    function updateTurno(id, campo, valore) {
+        const turnoIndex = turni.findIndex(turno => turno.id == id);
+        if (turnoIndex !== -1) {
+            turni[turnoIndex][campo] = valore;
+            saveTurni(); // Salviamo le modifiche
+        }
     }
 
     function dragStart(event) {
@@ -56,6 +64,8 @@ document.addEventListener("DOMContentLoaded", function () {
             renderTurni();
         }
     });
+
+    window.updateTurno = updateTurno; // Rende la funzione disponibile globalmente
 
     renderTurni(); // Carica la tabella inizialmente
 });
